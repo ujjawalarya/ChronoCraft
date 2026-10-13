@@ -13,6 +13,8 @@ const VOICE_PREF_KEY = 'chrono_voice_pref_v1';
 const GLOBAL_SOUND_PREF_KEY = 'chrono_global_sound_v1';
 const GLOBAL_SOUND_REPEAT_PREF_KEY = 'chrono_global_sound_repeat_v1';
 
+export type AppTheme = 'light' | 'dark' | 'midnight' | 'sage';
+
 export function loadGlobalSoundPreference(): SoundPreset {
   if (typeof window === 'undefined') return 'chime';
   try {
@@ -302,11 +304,11 @@ export function saveVoicePreference(enabled: boolean) {
   } catch {}
 }
 
-export function loadSavedTheme(): 'light' | 'dark' {
+export function loadSavedTheme(): AppTheme {
   if (typeof window === 'undefined') return 'dark';
   try {
     const saved = localStorage.getItem(THEME_KEY);
-    if (saved === 'light' || saved === 'dark') return saved;
+    if (saved === 'light' || saved === 'dark' || saved === 'midnight' || saved === 'sage') return saved;
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
       return 'light';
     }
@@ -314,7 +316,7 @@ export function loadSavedTheme(): 'light' | 'dark' {
   return 'dark';
 }
 
-export function saveTheme(theme: 'light' | 'dark') {
+export function saveTheme(theme: AppTheme) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(THEME_KEY, theme);

@@ -1,0 +1,94 @@
+name: Security and Quality Gates
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  dependency-secret-and-android-lint:
+    name: Dependencies, secrets, typecheck, and Android lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Scan repository history for secrets
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Reject known npm vulnerabilities
+        run: npm run audit
+
+      - name: Typecheck
+        run: npm run lint
+
+      - name: Build production web assets
+        run: npm run build
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: '21'
+          cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Sync Capacitor Android
+        run: npx cap sync android
+
+      - name: Make Gradle executable
+        run: chmod +x android/gradlew
+
+      - name: Run release Android lint
+        working-directory: android
+        run: ./gradlew lintRelease
+
+  codeql:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+          - javascript-typescript
+          - java-kotlin
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+
+      - name: Analyze source
+        uses: github/codeql-action/analyze@v4

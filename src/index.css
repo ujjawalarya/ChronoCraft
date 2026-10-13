@@ -30,6 +30,84 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Optional palettes intentionally leave timer identity/state colors untouched. */
+html[data-theme="sage"] {
+  color-scheme: light;
+  --theme-page: #e8efe8;
+  --theme-surface: #f5f8f4;
+  --theme-surface-raised: #ffffff;
+  --theme-surface-muted: #dfe9df;
+  --theme-ink: #20342a;
+  --theme-ink-soft: #3c5948;
+  --theme-ink-muted: #6c8274;
+  --theme-line: #cbd9ce;
+  --theme-accent: #47765b;
+}
+
+html[data-theme="midnight"] {
+  color-scheme: dark;
+  --theme-page: #101714;
+  --theme-surface: #18211d;
+  --theme-surface-raised: #202b26;
+  --theme-surface-muted: #27342e;
+  --theme-ink: #edf4ee;
+  --theme-ink-soft: #c1d0c4;
+  --theme-ink-muted: #91a397;
+  --theme-line: #34443a;
+  --theme-accent: #7fc9a2;
+}
+
+html[data-theme="sage"] body,
+html[data-theme="sage"] #root,
+html[data-theme="midnight"] body,
+html[data-theme="midnight"] #root {
+  background-color: var(--theme-page) !important;
+  color: var(--theme-ink) !important;
+  transition: background-color 220ms ease, color 220ms ease;
+}
+
+/* Sage: recolor the shared neutral utility surfaces across cards, menus and dialogs. */
+html[data-theme="sage"] :is(.bg-white, .bg-white\/60, .bg-white\/70, .bg-white\/80) {
+  background-color: var(--theme-surface-raised) !important;
+}
+html[data-theme="sage"] :is(.bg-slate-50, .bg-slate-50\/50, .bg-slate-50\/60, .bg-slate-50\/70) {
+  background-color: var(--theme-page) !important;
+}
+html[data-theme="sage"] :is(.bg-slate-100, .bg-slate-100\/70, .bg-slate-100\/80) {
+  background-color: var(--theme-surface-muted) !important;
+}
+html[data-theme="sage"] :is(.bg-slate-200, .bg-slate-200\/50, .bg-slate-200\/60, .bg-slate-200\/80) {
+  background-color: #d2dfd4 !important;
+}
+html[data-theme="sage"] :is(.text-slate-900, .text-slate-800) { color: var(--theme-ink) !important; }
+html[data-theme="sage"] :is(.text-slate-700, .text-slate-600) { color: var(--theme-ink-soft) !important; }
+html[data-theme="sage"] :is(.text-slate-500, .text-slate-400) { color: var(--theme-ink-muted) !important; }
+html[data-theme="sage"] :is(.border-slate-100, .border-slate-200, .border-slate-200\/70, .border-slate-200\/80, .border-slate-300) {
+  border-color: var(--theme-line) !important;
+}
+html[data-theme="sage"] :is(.bg-indigo-50, .bg-indigo-100) { background-color: #e4eee5 !important; }
+html[data-theme="sage"] :is(.text-indigo-600, .text-indigo-700) { color: var(--theme-accent) !important; }
+html[data-theme="sage"] :is(.border-indigo-200, .border-indigo-300) { border-color: #b8d0bd !important; }
+
+/* Midnight: preserve the existing dark-mode contrast hierarchy, shifted from navy to charcoal-green. */
+html[data-theme="midnight"] :is([class~="dark:bg-slate-950"], [class~="dark:bg-slate-900"], [class~="dark:bg-slate-900/90"], [class~="dark:bg-slate-900/80"], [class~="dark:bg-slate-900/70"], [class~="dark:bg-slate-900/60"], [class~="dark:bg-slate-900/50"]) {
+  background-color: var(--theme-surface) !important;
+}
+html[data-theme="midnight"] :is([class~="dark:bg-slate-800"], [class~="dark:bg-slate-800/80"], [class~="dark:bg-slate-800/70"], [class~="dark:bg-slate-800/60"], [class~="dark:bg-slate-800/50"], [class~="dark:bg-slate-800/40"]) {
+  background-color: var(--theme-surface-raised) !important;
+}
+html[data-theme="midnight"] :is([class~="dark:bg-slate-700"], [class~="dark:bg-slate-700/70"], [class~="dark:bg-slate-700/60"], [class~="dark:bg-slate-700/50"]) {
+  background-color: var(--theme-surface-muted) !important;
+}
+html[data-theme="midnight"] [class~="dark:bg-[#0F172A]"] { background-color: var(--theme-page) !important; }
+html[data-theme="midnight"] :is([class~="dark:text-slate-100"], [class~="dark:text-slate-50"]) { color: var(--theme-ink) !important; }
+html[data-theme="midnight"] :is([class~="dark:text-slate-200"], [class~="dark:text-slate-300"]) { color: var(--theme-ink-soft) !important; }
+html[data-theme="midnight"] :is([class~="dark:text-slate-400"], [class~="dark:text-slate-500"]) { color: var(--theme-ink-muted) !important; }
+html[data-theme="midnight"] :is([class~="dark:border-slate-700"], [class~="dark:border-slate-800"], [class~="dark:border-slate-800/80"]) { border-color: var(--theme-line) !important; }
+html[data-theme="midnight"] :is([class~="dark:bg-indigo-950/50"], [class~="dark:bg-indigo-950/40"]) { background-color: #203b30 !important; }
+html[data-theme="midnight"] :is([class~="dark:text-indigo-400"], [class~="dark:text-indigo-300"]) { color: var(--theme-accent) !important; }
+html[data-theme="midnight"] :is([class~="dark:border-indigo-800"], [class~="dark:border-indigo-700"]) { border-color: #416b55 !important; }
+
 /* Hide scrollbar for clean horizontal swipe containers */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

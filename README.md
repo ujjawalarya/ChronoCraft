@@ -158,27 +158,44 @@ Out of frustration and necessity, I built ChronoCraft on the spot to manage mult
 ### Option 2: Install from Orion store
 [![Get it on Orion Store](https://raw.githubusercontent.com/RookieEnough/Orion-Store/refs/heads/main/assets/orion-badge.png)](https://rookieenough.github.io/Orion-Data/redirect.html?id=chronocraft)
 
-### Option 3: Build From Source (Termux / Linux / macOS)
+### Option 3: Build From Source
+
+Prerequisites: Node.js 22 or newer, JDK 21, and Android SDK Platform 36.
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/ArafatRakib/ChronoCraft.git
 cd ChronoCraft
 
-# 2. Install dependencies
-npm install
+# 2. Install the exact reviewed dependency graph
+npm ci
 
-# 3. Run development web server
-npm run dev
+# 3. Run the release gates available locally
+npm run audit
+npm run lint
 
 # 4. Build & sync to Android
 npm run build
 npx cap sync android
 
-# 5. Compile Android APK
+# 5. Run Android release lint and create an installable debug APK
 cd android
-./gradlew assembleRelease
+./gradlew lintRelease assembleDebug
 ```
+
+On Windows, use `gradlew.bat lintRelease assembleDebug` for the last command.
+The debug APK is written to
+`android/app/build/outputs/apk/debug/app-debug.apk` and is signed with the
+standard Android debug key. It is suitable for local installation and testing,
+not redistribution.
+
+For a distributable signed APK/AAB, configure the four repository secrets
+`RELEASE_KEYSTORE_BASE64`, `RELEASE_KEYSTORE_PASSWORD`, `RELEASE_KEY_ALIAS`,
+and `RELEASE_KEY_PASSWORD`, then push a version tag such as `v2.0.2`. The
+`Build & Release Android App` workflow runs npm audit, Gitleaks, CodeQL, type
+checking, the production web build, and Android `lintRelease` before it signs
+and publishes the APK and AAB. Release artifacts are also available from a
+manual workflow run without publishing a GitHub Release.
 
 ---
 
@@ -187,8 +204,8 @@ cd android
 | Layer | Technology |
 | :--- | :--- |
 | **Frontend UI** | React 18, TypeScript, Tailwind CSS, Lucide Icons |
-| **Mobile Runtime** | Capacitor 7 |
-| **Build & Tooling** | Vite, Gradle 8.13, Android SDK 34 |
+| **Mobile Runtime** | Capacitor 6.2.2 |
+| **Build & Tooling** | Vite, Gradle 8.13, Android SDK 36 |
 | **CI / CD** | GitHub Actions (Automated Release APK & AAB Signing) |
 
 ---

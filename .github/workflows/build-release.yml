@@ -12,48 +12,50 @@ on:
 
 permissions:
   contents: write
+  security-events: write
 
 jobs:
+  security-gates:
+    name: Security and quality gates
+    uses: ./.github/workflows/security.yml
+    permissions:
+      contents: read
+      security-events: write
+
   build:
     name: Build APK & AAB
+    needs: security-gates
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Required for GitHub to auto-generate release notes across tags
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install Node Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build Web App
         run: npm run build
 
       - name: Setup Java JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Sync Capacitor Android
         run: npx @capacitor/cli sync android
-
-      - name: Strip Local AAPT2 Overrides for CI
-        working-directory: android
-        run: |
-          sed -i '/aapt2/d' gradle.properties || true
-          echo "=== gradle.properties after cleanup ==="
-          cat gradle.properties
 
       - name: Make Gradle Executable
         run: chmod +x android/gradlew
@@ -97,6 +99,13 @@ jobs:
           fi
 
           ls -la release-output/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: ChronoCraft-${{ github.ref_name }}
+          path: release-output/*
+          if-no-files-found: error
 
       - name: Upload Binaries to GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')

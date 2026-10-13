@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { IntervalTimerItem, ColorName } from '../types';
+import { IntervalTimerItem, ColorName, TimerPreset } from '../types';
 import { getColorTheme } from '../constants/colors';
 import { formatTime } from '../utils/timeFormatter';
 import { capitalizeWords } from '../utils/textFormatters';
@@ -19,7 +19,8 @@ import {
   Dumbbell, 
   MoreVertical,
   BookmarkPlus,
-  Maximize2
+  Maximize2,
+  Clock
 } from 'lucide-react';
 
 interface IntervalCardProps {

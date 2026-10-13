@@ -25,7 +25,11 @@
       (function() {
         try {
           var saved = localStorage.getItem('chrono_theme_v1');
-          var isDark = saved === 'dark' || (!saved && !(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches));
+          var theme = ['light', 'dark', 'midnight', 'sage'].indexOf(saved) >= 0
+            ? saved
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          document.documentElement.dataset.theme = theme;
+          var isDark = theme === 'dark' || theme === 'midnight';
           if (isDark) {
             document.documentElement.classList.add('dark');
           } else {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, BellRing, X, ShieldCheck } from 'lucide-react';
 import { backgroundNotificationService } from '../utils/backgroundNotificationService';
+import { capacitorBridge } from '../utils/capacitorNativeBridge';
 
 export const NotificationPermissionBanner: React.FC = () => {
   const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>('granted');
